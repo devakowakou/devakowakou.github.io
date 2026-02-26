@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 
+     * NEUBRUTALIST PALETTE
+     * Background: Raw Beige (FDF6E3)
+     * Foreground: Black (09090B)
+     * Accents: Neon Green (39FF14), Hot Pink (FF00FF), Cyan (00FFFF)
+     */
+    
+    --background: 44 87% 94%; /* #FDF6E3 */
+    --foreground: 240 10% 3.9%; /* #09090B */
+    
+    --card: 44 87% 94%;
+    --card-foreground: 240 10% 3.9%;
+    
+    --popover: 44 87% 94%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    --primary: 240 10% 3.9%; /* Black borders/text */
+    --primary-foreground: 44 87% 94%; /* Beige text on black */
+    
+    --secondary: 111 100% 54%; /* Neon Green */
+    --secondary-foreground: 240 10% 3.9%;
+    
+    --muted: 60 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    
+    --accent: 300 100% 50%; /* Hot Pink */
+    --accent-foreground: 240 10% 3.9%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 10% 3.9%; /* Black borders */
+    --input: 240 10% 3.9%;
+    --ring: 240 10% 3.9%;
+    
+    --radius: 0rem; /* Sharp edges for Brutalism */
+    
+    --font-sans: 'DM Sans', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+
+    /* Shadow Logic */
+    --shadow-hard: 4px 4px 0px 0px rgba(0,0,0,1);
+    --shadow-hard-lg: 8px 8px 0px 0px rgba(0,0,0,1);
+  }
+
+  .dark {
+    /* Invert for "Dark Mode" if needed, or keep same vibe */
+    --background: 240 10% 3.9%;
+    --foreground: 44 87% 94%;
+    
+    --card: 240 10% 3.9%;
+    --card-foreground: 44 87% 94%;
+    
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 44 87% 94%;
+    
+    --primary: 44 87% 94%;
+    --primary-foreground: 240 10% 3.9%;
+    
+    --secondary: 111 100% 54%;
+    --secondary-foreground: 240 10% 3.9%;
+    
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 300 100% 50%;
+    --accent-foreground: 44 87% 94%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 44 87% 94%;
+    
+    --border: 44 87% 94%;
+    --input: 44 87% 94%;
+    --ring: 44 87% 94%;
+
+    --shadow-hard: 4px 4px 0px 0px #FDF6E3;
+    --shadow-hard-lg: 8px 8px 0px 0px #FDF6E3;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    background-color: hsl(var(--background)); /* For smooth transitions */
+    transition: background-color 0.5s ease;
+  }
+}
+
+/* Custom utilities */
+.text-stroke-1 {
+  -webkit-text-stroke: 1px currentColor;
+}
+.text-stroke-2 {
+  -webkit-text-stroke: 2px currentColor;
+}
+
+/* Hide scrollbar but allow scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
