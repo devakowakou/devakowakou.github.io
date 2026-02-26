@@ -9,11 +9,11 @@ export const Hero = () => {
   const isMobile = useIsMobile();
 
   const stickers = [
-    { id: 'react', icon: <Code2 size={isMobile ? 24 : 32} />, label: "REACT", color: "bg-cyan-400", x: isMobile ? -110 : -380, y: isMobile ? -100 : -180, rotate: -5 },
-    { id: 'bash', icon: <Terminal size={isMobile ? 24 : 32} />, label: "BASH", color: "bg-green-400", x: isMobile ? 110 : 400, y: isMobile ? 120 : 220, rotate: 5 },
-    { id: 'sys', icon: <Cpu size={isMobile ? 24 : 32} />, label: "SYS", color: "bg-yellow-400", x: isMobile ? -100 : -420, y: isMobile ? 180 : 300, rotate: -10 },
-    { id: 'fix', icon: <Bug size={isMobile ? 24 : 32} />, label: "FIX ME", color: "bg-red-400", x: isMobile ? 120 : 380, y: isMobile ? -180 : -250, rotate: 10 },
-    { id: 'fast', icon: <Zap size={isMobile ? 24 : 32} />, label: "FAST", color: "bg-purple-400", x: isMobile ? 0 : 50, y: isMobile ? -250 : -350, rotate: 15 },
+    { id: 'react', icon: <Code2 size={isMobile ? 24 : 32} />, label: "CODE", color: "bg-cyan-400", x: isMobile ? -210 : -380, y: isMobile ? -20 : -180, rotate: -5 },
+    { id: 'bash', icon: <Terminal size={isMobile ? 24 : 32} />, label: "BASH", color: "bg-green-400", x: isMobile ? 210 : 400, y: isMobile ? 160 : 220, rotate: 5 },
+    { id: 'sys', icon: <Cpu size={isMobile ? 24 : 32} />, label: "SYS", color: "bg-yellow-400", x: isMobile ? -210 : -420, y: isMobile ? 220 : 300, rotate: -10 },
+    { id: 'fix', icon: <Bug size={isMobile ? 24 : 32} />, label: "FIX ME", color: "bg-red-400", x: isMobile ? 200 : 200, y: isMobile ? -140 : -250, rotate: 10 },
+    { id: 'fast', icon: <Zap size={isMobile ? 24 : 32} />, label: "FAST", color: "bg-purple-400", x: isMobile ? 100 : 50, y: isMobile ? -200 : -350, rotate: 15 },
   ];
 
   return (
