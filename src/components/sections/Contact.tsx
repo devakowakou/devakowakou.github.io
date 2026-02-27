@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Mail, Linkedin, Github } from 'lucide-react';
+import { X, Send, Mail, Linkedin, Github, Headset} from 'lucide-react';
 import { personalInfo } from '../../config/personal';
 
 export const Contact = () => {
@@ -27,6 +27,13 @@ export const Contact = () => {
             className="bg-white text-black p-4 border-4 border-white shadow-neubrutalism hover:bg-secondary transition-colors"
           >
             <Mail size={32} />
+          </motion.a>
+          <motion.a
+            href={`tel:${personalInfo.phone}`}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="bg-white text-black p-4 border-4 border-white shadow-neubrutalism hover:bg-secondary transition-colors"
+          >
+            <Headset size={32} />
           </motion.a>
           <motion.a
             href={personalInfo.social.linkedin}
