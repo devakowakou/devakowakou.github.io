@@ -47,25 +47,25 @@ export const Work = () => {
                   {/* Floating Action Buttons */}
                   <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity translate-y-4 group-hover:translate-y-0 duration-300">
                     {project.github && (
-                      <a 
+                      <a
                         href={project.github}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-black text-white p-3 hover:bg-white hover:text-black border-2 border-black transition-colors"
-                        title="GitHub"
+                        className="bg-black text-white p-3 hover:bg-white hover:text-black border-2 border-black transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2"
+                        aria-label={`View ${project.title} source code on GitHub (opens in a new tab)`}
                       >
-                        <Github size={20} />
+                        <Github size={20} aria-hidden="true" />
                       </a>
                     )}
                     {project.live && (
-                      <a 
+                      <a
                         href={project.live}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-secondary text-black p-3 border-2 border-black hover:bg-black hover:text-white transition-colors"
-                        title="Live Demo"
+                        className="bg-secondary text-black p-3 border-2 border-black hover:bg-black hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2"
+                        aria-label={`View ${project.title} live demo (opens in a new tab)`}
                       >
-                        <ExternalLink size={20} />
+                        <ExternalLink size={20} aria-hidden="true" />
                       </a>
                     )}
                   </div>

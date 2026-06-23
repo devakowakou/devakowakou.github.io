@@ -12,7 +12,7 @@ export const PageContainer = ({ children }: PageContainerProps) => {
   // Let's use a fixed background element that changes color.
   
   return (
-    <div className="min-h-screen w-full relative overflow-x-hidden selection:bg-accent selection:text-white">
+    <div className="min-h-screen w-full relative overflow-x-hidden selection:bg-accent selection:text-black">
       {/* Background layer managed by sections or global state */}
       <div 
         id="bg-layer"

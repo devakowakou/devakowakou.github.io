@@ -49,8 +49,8 @@ export const About = () => {
                 whileInView={{ y: 0, opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                whileHover={{ translate: "4px 4px", boxShadow: "0px 0px 0px 0px rgba(0,0,0,1)" }}
-                className={`border-4 border-black p-6 shadow-neubrutalism ${skill.color} flex flex-col items-center text-center transition-all`}
+                whileHover={{ x: 4, y: 4, boxShadow: "0px 0px 0px 0px rgba(0,0,0,1)" }}
+                className={`border-4 border-black p-6 shadow-neubrutalism ${skill.color} flex flex-col items-center text-center`}
               >
                 <div className="bg-white border-2 border-black p-3 mb-4 shadow-neubrutalism-sm rounded-full">
                   {skill.icon}

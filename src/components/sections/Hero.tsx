@@ -83,7 +83,7 @@ export const Hero = () => {
       </div>
 
       {/* Draggable Playground Layer - Moved to higher z-index to ensure interactivity */}
-      <div className="absolute inset-0 z-30 pointer-events-none">
+      <div className="absolute inset-0 z-30 pointer-events-none" aria-hidden="true">
         <div className="w-full h-full relative flex items-center justify-center">
             {stickers.map((sticker) => (
               <motion.div

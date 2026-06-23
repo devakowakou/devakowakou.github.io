@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { MotionConfig } from 'framer-motion';
 import { PageContainer } from './components/layout/PageContainer';
 import { Navbar } from './components/layout/Navbar';
 import { Hero } from './components/sections/Hero';
@@ -35,13 +36,15 @@ function App() {
   }, []);
 
   return (
-    <PageContainer>
-      <Navbar />
-      <div id="home"><Hero /></div>
-      <div id="about"><About /></div>
-      <div id="work"><Work /></div>
-      <div id="contact"><Contact /></div>
-    </PageContainer>
+    <MotionConfig reducedMotion="user">
+      <PageContainer>
+        <Navbar />
+        <div id="home"><Hero /></div>
+        <div id="about"><About /></div>
+        <div id="work"><Work /></div>
+        <div id="contact"><Contact /></div>
+      </PageContainer>
+    </MotionConfig>
   );
 }
 
