@@ -1,10 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Mail, Linkedin, Github, Headset} from 'lucide-react';
+import { X, Send, Mail, Linkedin, Github, Headset, Loader2, CheckCircle2 } from 'lucide-react';
 import { personalInfo } from '../../config/personal';
+import { blink } from '../../lib/blink';
+
+type FormStatus = 'idle' | 'sending' | 'success' | 'error';
+
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 export const Contact = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<FormStatus>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const updateField = (field: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({ ...prev, [field]: e.target.value }));
+      if (status === 'error') setStatus('idle');
+    };
+
+  const resetForm = () => {
+    setForm({ name: '', email: '', message: '' });
+    setStatus('idle');
+    setErrorMsg('');
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    // Clear a completed submission so the form is fresh next time it opens.
+    if (status === 'success') resetForm();
+  };
+
+  // While the modal is open, close on Escape and lock background scrolling.
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') closeModal();
+    };
+    document.addEventListener('keydown', onKeyDown);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, status]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (status === 'sending') return;
+
+    const name = form.name.trim();
+    const email = form.email.trim();
+    const message = form.message.trim();
+
+    if (!name || !email || !message) {
+      setStatus('error');
+      setErrorMsg('All fields are required.');
+      return;
+    }
+
+    setStatus('sending');
+    setErrorMsg('');
+
+    try {
+      const { success } = await blink.notifications.email({
+        to: personalInfo.email,
+        replyTo: email,
+        subject: `New portfolio message from ${name}`,
+        text: `From: ${name} <${email}>\n\n${message}`,
+        html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+      });
+
+      if (!success) throw new Error('The mail server rejected the request.');
+      setStatus('success');
+    } catch (err) {
+      // Surface the raw error for debugging but keep the UI message friendly.
+      console.error('Contact form submission failed:', err);
+      setStatus('error');
+      setErrorMsg("Couldn't send your message right now. Please email me directly instead.");
+    }
+  };
+
+  const isSending = status === 'sending';
 
   return (
     <section 
@@ -72,12 +156,12 @@ export const Contact = () => {
       {/* Modal Overlay */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="contact-modal-title">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
+              onClick={closeModal}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
             
@@ -93,7 +177,7 @@ export const Contact = () => {
                 <button
                   type="button"
                   aria-label="Close contact form"
-                  onClick={() => setIsOpen(false)}
+                  onClick={closeModal}
                   className="hover:bg-red-500 hover:text-black transition-colors rounded-sm p-2 min-h-[44px] min-w-[44px] flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <X size={24} aria-hidden="true" />
@@ -102,47 +186,93 @@ export const Contact = () => {
 
               {/* Raw Form */}
               <div className="p-8 font-mono">
-                <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-                  <div className="space-y-2">
-                    <label htmlFor="contact-name" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Identity</label>
-                    <input
-                      id="contact-name"
-                      name="name"
-                      type="text"
-                      autoComplete="name"
-                      placeholder="Who are you?"
-                      className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400"
-                    />
+                {status === 'success' ? (
+                  <div className="text-center py-8 space-y-4" role="status">
+                    <CheckCircle2 size={64} className="mx-auto" aria-hidden="true" />
+                    <p className="text-2xl font-black uppercase">Message transmitted</p>
+                    <p className="text-base font-medium">Thanks for reaching out — I'll reply to your inbox soon.</p>
+                    <button
+                      type="button"
+                      onClick={closeModal}
+                      className="bg-black text-white text-lg font-bold px-8 py-3 border-2 border-black hover:bg-white hover:text-black hover:shadow-[6px_6px_0px_0px_#000] transition-all uppercase focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2"
+                    >
+                      Close
+                    </button>
                   </div>
+                ) : (
+                  <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                    <div className="space-y-2">
+                      <label htmlFor="contact-name" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Identity</label>
+                      <input
+                        id="contact-name"
+                        name="name"
+                        type="text"
+                        autoComplete="name"
+                        required
+                        value={form.name}
+                        onChange={updateField('name')}
+                        disabled={isSending}
+                        placeholder="Who are you?"
+                        className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400 disabled:opacity-60"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="contact-email" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Coordinates</label>
-                    <input
-                      id="contact-email"
-                      name="email"
-                      type="email"
-                      autoComplete="email"
-                      placeholder="email@address.com"
-                      className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400"
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <label htmlFor="contact-email" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Coordinates</label>
+                      <input
+                        id="contact-email"
+                        name="email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        value={form.email}
+                        onChange={updateField('email')}
+                        disabled={isSending}
+                        placeholder="email@address.com"
+                        className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400 disabled:opacity-60"
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    <label htmlFor="contact-message" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Payload</label>
-                    <textarea
-                      id="contact-message"
-                      name="message"
-                      rows={4}
-                      placeholder="What's the mission?"
-                      className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400 resize-none"
-                    />
-                  </div>
+                    <div className="space-y-2">
+                      <label htmlFor="contact-message" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Payload</label>
+                      <textarea
+                        id="contact-message"
+                        name="message"
+                        rows={4}
+                        required
+                        value={form.message}
+                        onChange={updateField('message')}
+                        disabled={isSending}
+                        placeholder="What's the mission?"
+                        className="w-full bg-white border-2 border-black p-4 text-lg focus:outline-none focus:ring-0 focus:shadow-[4px_4px_0px_0px_#000] transition-shadow placeholder:text-gray-400 resize-none disabled:opacity-60"
+                      />
+                    </div>
 
-                  <button type="submit" className="w-full bg-black text-white text-xl font-bold py-4 border-2 border-black hover:bg-white hover:text-black hover:shadow-[8px_8px_0px_0px_#000] transition-all flex items-center justify-center gap-2 uppercase focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2">
-                    <Send size={24} aria-hidden="true" />
-                    Transmit Data
-                  </button>
-                </form>
+                    {status === 'error' && (
+                      <p role="alert" className="bg-red-500 text-white font-bold p-3 border-2 border-black">
+                        ! {errorMsg}
+                      </p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isSending}
+                      className="w-full bg-black text-white text-xl font-bold py-4 border-2 border-black hover:bg-white hover:text-black hover:shadow-[8px_8px_0px_0px_#000] transition-all flex items-center justify-center gap-2 uppercase focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black focus-visible:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:text-white disabled:hover:shadow-none"
+                    >
+                      {isSending ? (
+                        <>
+                          <Loader2 size={24} className="animate-spin" aria-hidden="true" />
+                          Transmitting…
+                        </>
+                      ) : (
+                        <>
+                          <Send size={24} aria-hidden="true" />
+                          Transmit Data
+                        </>
+                      )}
+                    </button>
+                  </form>
+                )}
               </div>
             </motion.div>
           </div>
