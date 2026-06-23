@@ -1,48 +1,36 @@
 import React, { useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import { PageContainer } from './components/layout/PageContainer';
 import { Navbar } from './components/layout/Navbar';
-import { Hero } from './components/sections/Hero';
-import { About } from './components/sections/About';
-import { Work } from './components/sections/Work';
-import { Contact } from './components/sections/Contact';
+
+// Background colour for the fixed bg-layer, per route.
+const ROUTE_BG: Record<string, string> = {
+  '/': 'hsl(44, 87%, 94%)', // Beige
+  '/about': '#ffffff',       // White
+  '/work': '#FF00FF',        // Hot pink
+  '/contact': '#000000',     // Black
+};
 
 function App() {
-  
-  // Logic to handle background color shift based on active section
+  const { pathname } = useLocation();
+
+  // Drive the background layer and reset scroll on every route change.
   useEffect(() => {
-    const sections = document.querySelectorAll('section[data-bgcolor]');
     const bgLayer = document.getElementById('bg-layer');
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && bgLayer) {
-          const color = entry.target.getAttribute('data-bgcolor');
-          if (color) {
-            bgLayer.style.backgroundColor = color;
-          }
-        }
-      });
-    }, {
-      root: null,
-      threshold: 0.5, // Trigger when 50% visible
-    });
-
-    sections.forEach(section => observer.observe(section));
-
-    return () => {
-      sections.forEach(section => observer.unobserve(section));
-    };
-  }, []);
+    if (bgLayer) bgLayer.style.backgroundColor = ROUTE_BG[pathname] ?? ROUTE_BG['/'];
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <MotionConfig reducedMotion="user">
       <PageContainer>
         <Navbar />
-        <div id="home"><Hero /></div>
-        <div id="about"><About /></div>
-        <div id="work"><Work /></div>
-        <div id="contact"><Contact /></div>
+        {/* No z-index here: a stacking context on <main> would trap the
+            contact modal (z-[60]) below the fixed navbar (z-50). */}
+        <main className="relative flex flex-col w-full">
+          <Outlet />
+        </main>
       </PageContainer>
     </MotionConfig>
   );

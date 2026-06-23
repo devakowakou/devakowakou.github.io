@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { personalInfo } from '../../config/personal';
+
+const navItems = [
+  { label: 'About', to: '/about' },
+  { label: 'Work', to: '/work' },
+  { label: 'Contact', to: '/contact' },
+];
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,7 +16,7 @@ export const Navbar = () => {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 p-4 pointer-events-none">
       <div className="container mx-auto flex justify-between items-start">
-        
+
         {/* Logo */}
         <Link to="/" aria-label="Home" className="bg-white border-4 border-black p-2 shadow-neubrutalism pointer-events-auto cursor-pointer hover:translate-y-1 hover:shadow-none transition-all block focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent">
           <span className="font-black text-xl tracking-tighter">{personalInfo.name.split(' ')[0].toLowerCase()}</span>
@@ -18,14 +24,18 @@ export const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex gap-4 pointer-events-auto">
-          {['About', 'Work', 'Contact'].map((item) => (
-            <button
-              key={item}
-              onClick={() => document.getElementById(item.toLowerCase())?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-white border-4 border-black px-6 py-2 font-mono font-bold shadow-neubrutalism hover:bg-accent hover:text-black hover:translate-y-[2px] hover:shadow-neubrutalism-sm transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
+          {navItems.map(({ label, to }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `border-4 border-black px-6 py-2 font-mono font-bold shadow-neubrutalism hover:bg-accent hover:text-black hover:translate-y-[2px] hover:shadow-neubrutalism-sm transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent ${
+                  isActive ? 'bg-black text-white' : 'bg-white text-black'
+                }`
+              }
             >
-              {item}
-            </button>
+              {label}
+            </NavLink>
           ))}
         </div>
 
@@ -61,15 +71,19 @@ export const Navbar = () => {
               <X size={24} aria-hidden="true" />
             </button>
 
-             {['About', 'Work', 'Contact'].map((item) => (
-              <a 
-                key={item}
-                href={`#${item.toLowerCase()}`}
+            {navItems.map(({ label, to }) => (
+              <NavLink
+                key={to}
+                to={to}
                 onClick={() => setIsOpen(false)}
-                className="text-6xl font-black text-white text-stroke-2 stroke-black hover:text-black hover:text-stroke-0 transition-colors uppercase"
+                className={({ isActive }) =>
+                  `text-left text-6xl font-black text-stroke-2 stroke-black hover:text-black hover:text-stroke-0 transition-colors uppercase focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-black ${
+                    isActive ? 'text-black text-stroke-0' : 'text-white'
+                  }`
+                }
               >
-                {item}
-              </a>
+                {label}
+              </NavLink>
             ))}
           </motion.div>
         )}

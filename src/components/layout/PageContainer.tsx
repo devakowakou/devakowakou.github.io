@@ -20,13 +20,11 @@ export const PageContainer = ({ children }: PageContainerProps) => {
       />
       
       {/* Grid Pattern Overlay */}
-      <div className="fixed inset-0 -z-40 opacity-10 pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }} 
+      <div className="fixed inset-0 -z-40 opacity-10 pointer-events-none"
+           style={{ backgroundImage: 'radial-gradient(#000 1px, transparent 1px)', backgroundSize: '24px 24px' }}
       />
 
-      <main className="relative z-10 flex flex-col w-full">
-        {children}
-      </main>
+      {children}
     </div>
   );
 };
