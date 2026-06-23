@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Mail, Linkedin, Github, Headset, Loader2, CheckCircle2 } from 'lucide-react';
 import { personalInfo } from '../../config/personal';
-import { blink } from '../../lib/blink';
 
 type FormStatus = 'idle' | 'sending' | 'success' | 'error';
 
-const escapeHtml = (value: string) =>
-  value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+// Web3Forms access key is public by design (spam protection is server-side).
+const WEB3FORMS_ACCESS_KEY =
+  import.meta.env.VITE_WEB3FORMS_KEY ?? '04a757be-fe1f-4d89-9734-ab4f642a8a64';
 
 export const Contact = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [form, setForm] = useState({ name: '', email: '', message: '', botcheck: '' });
   const [status, setStatus] = useState<FormStatus>('idle');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -22,7 +22,7 @@ export const Contact = () => {
     };
 
   const resetForm = () => {
-    setForm({ name: '', email: '', message: '' });
+    setForm({ name: '', email: '', message: '', botcheck: '' });
     setStatus('idle');
     setErrorMsg('');
   };
@@ -70,15 +70,22 @@ export const Contact = () => {
     setErrorMsg('');
 
     try {
-      const { success } = await blink.notifications.email({
-        to: personalInfo.email,
-        replyTo: email,
-        subject: `New portfolio message from ${name}`,
-        text: `From: ${name} <${email}>\n\n${message}`,
-        html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>`,
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_ACCESS_KEY,
+          subject: `New portfolio message from ${name}`,
+          from_name: 'Portfolio contact form',
+          name,
+          email,
+          message,
+          botcheck: form.botcheck, // honeypot — must stay empty
+        }),
       });
+      const data = await response.json();
 
-      if (!success) throw new Error('The mail server rejected the request.');
+      if (!data.success) throw new Error(data.message || 'The mail server rejected the request.');
       setStatus('success');
     } catch (err) {
       // Surface the raw error for debugging but keep the UI message friendly.
@@ -201,6 +208,17 @@ export const Contact = () => {
                   </div>
                 ) : (
                   <form className="space-y-6" onSubmit={handleSubmit} noValidate>
+                    {/* Honeypot: hidden from users, bots that fill it are rejected. */}
+                    <input
+                      type="text"
+                      name="botcheck"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      aria-hidden="true"
+                      value={form.botcheck}
+                      onChange={updateField('botcheck')}
+                      className="hidden"
+                    />
                     <div className="space-y-2">
                       <label htmlFor="contact-name" className="block font-bold text-lg uppercase border-b-2 border-black w-max">Identity</label>
                       <input
