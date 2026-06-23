@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Code2, Terminal, Cpu, Bug, Zap } from 'lucide-react';
+import { Code2, Terminal, Zap } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { personalInfo } from '../../config/personal';
 
@@ -8,12 +8,12 @@ export const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
+  // Three corner stickers keep the playful neubrutalist feel without
+  // crowding the central content (especially on mobile).
   const stickers = [
-    { id: 'react', icon: <Code2 size={isMobile ? 24 : 32} />, label: "CODE", color: "bg-cyan-400", x: isMobile ? -210 : -380, y: isMobile ? -20 : -180, rotate: -5 },
-    { id: 'bash', icon: <Terminal size={isMobile ? 24 : 32} />, label: "BASH", color: "bg-green-400", x: isMobile ? 210 : 400, y: isMobile ? 160 : 220, rotate: 5 },
-    { id: 'sys', icon: <Cpu size={isMobile ? 24 : 32} />, label: "SYS", color: "bg-yellow-400", x: isMobile ? -210 : -420, y: isMobile ? 220 : 300, rotate: -10 },
-    { id: 'fix', icon: <Bug size={isMobile ? 24 : 32} />, label: "FIX ME", color: "bg-red-400", x: isMobile ? 200 : 200, y: isMobile ? -140 : -250, rotate: 10 },
-    { id: 'fast', icon: <Zap size={isMobile ? 24 : 32} />, label: "FAST", color: "bg-purple-400", x: isMobile ? 100 : 50, y: isMobile ? -200 : -350, rotate: 15 },
+    { id: 'react', icon: <Code2 size={isMobile ? 20 : 32} />, label: "CODE", color: "bg-cyan-400", x: isMobile ? -130 : -380, y: isMobile ? -190 : -180, rotate: -5 },
+    { id: 'fast', icon: <Zap size={isMobile ? 20 : 32} />, label: "FAST", color: "bg-purple-400", x: isMobile ? 130 : 400, y: isMobile ? -210 : -250, rotate: 12 },
+    { id: 'bash', icon: <Terminal size={isMobile ? 20 : 32} />, label: "BASH", color: "bg-green-400", x: isMobile ? 115 : 380, y: isMobile ? 300 : 240, rotate: 5 },
   ];
 
   return (
@@ -96,13 +96,13 @@ export const Hero = () => {
                 whileDrag={{ scale: 1.1, cursor: "grabbing" }}
                 initial={{ x: 0, y: 0, rotate: 0, opacity: 0 }}
                 animate={{ x: sticker.x, y: sticker.y, rotate: sticker.rotate, opacity: 1 }}
-                transition={{ 
+                transition={{
                   type: "spring",
-                  stiffness: 80,
-                  damping: 15,
-                  delay: 1.0 + (stickers.indexOf(sticker) * 0.1)
+                  stiffness: 90,
+                  damping: 18,
+                  delay: 0.8 + (stickers.indexOf(sticker) * 0.12)
                 }}
-                className={`absolute pointer-events-auto flex flex-col items-center justify-center p-2 md:p-4 border-4 border-black shadow-neubrutalism ${sticker.color} w-24 h-24 md:w-32 md:h-32 rounded-none cursor-grab active:cursor-grabbing select-none`}
+                className={`absolute pointer-events-auto flex flex-col items-center justify-center p-2 md:p-4 border-4 border-black shadow-neubrutalism ${sticker.color} w-20 h-20 md:w-32 md:h-32 rounded-none cursor-grab active:cursor-grabbing select-none`}
               >
                 <div className="flex flex-col items-center justify-center pointer-events-none">
                   {sticker.icon}
