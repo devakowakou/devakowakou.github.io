@@ -46,11 +46,19 @@ export const Hero = () => {
             className="mb-8 relative"
           >
             <div className="w-32 h-32 md:w-48 md:h-48 border-6 border-black bg-white shadow-neubrutalism-xl overflow-hidden relative group">
-              <img 
-                src="/profile.png" 
-                alt={personalInfo.name}
-                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
-              />
+              <picture>
+                <source srcSet="/profile.webp" type="image/webp" />
+                <img
+                  src="/profile.png"
+                  alt={`${personalInfo.name} — ${personalInfo.role}`}
+                  width={1024}
+                  height={1024}
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-300"
+                />
+              </picture>
               <div className="absolute inset-0 bg-secondary opacity-0 group-hover:opacity-20 transition-opacity mix-blend-multiply"></div>
             </div>
             <div className="absolute -bottom-2 -right-2 bg-accent text-black px-3 py-1 border-2 border-black font-mono text-xs font-bold shadow-neubrutalism-sm">

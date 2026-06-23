@@ -38,8 +38,9 @@ export const Work = () => {
                   <div className={`absolute inset-0 opacity-20 ${project.color} mix-blend-multiply pointer-events-none group-hover:opacity-0 transition-opacity`}></div>
                   <img 
                     loading="lazy"
-                    src={project.image} 
-                    alt={project.title} 
+                    decoding="async"
+                    src={project.image}
+                    alt={`${project.title} — ${project.category} screenshot`}
                     className="w-full h-[300px] md:h-[400px] object-cover filter grayscale group-hover:grayscale-0 transition-all duration-500"
                   />
                   
